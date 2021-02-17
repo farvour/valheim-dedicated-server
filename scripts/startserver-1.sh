@@ -18,6 +18,19 @@ export SteamAppId=892970
 
 echo "Starting server PRESS CTRL-C to exit"
 
+echo "Name: ${VALHEIM_SERVER_NAME}"
+echo "World: ${VALHEIM_SERVER_WORLD}"
+
+SERVER_ARGS=(
+    "-name \"${VALHEIM_SERVER_NAME}\""
+    "-port 2456"
+    "-world \"${VALHEIM_SERVER_WORLD}\""
+)
+
+if [ ! -z "${VALHEIM_SERVER_PASSWORD}" ]; then
+    echo "Password is set!"
+fi
+
 ./valheim_server.x86_64 \
     -name "${VALHEIM_SERVER_NAME}" \
     -port 2456 \

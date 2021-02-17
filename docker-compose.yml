@@ -4,6 +4,8 @@ version: "3.8"
 services:
   valheim-server:
     build: .
+    env_file:
+      - .env
     volumes:
       - type: volume # You could also bind-mount this to your local FS (see below)
         source: valheim-data
