@@ -11,6 +11,13 @@ set -e
 : ${VALHEIM_SERVER_NAME:="My Valheim Server"}
 : ${VALHEIM_SERVER_WORLD:="dedicated_world"}
 : ${VALHEIM_SERVER_PASSWORD:=""}
+: ${VALHEIM_SERVER_PUBLIC:="0"} # Private, unlisted by default.
+
+# Dedicated server requires a password.
+if [ -z "${VALHEIM_SERVER_PASSWORD}" ]; then
+    echo "Password is not set!"
+    exit 1
+fi
 
 export templdpath=$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=./linux64:$LD_LIBRARY_PATH
@@ -25,16 +32,14 @@ SERVER_ARGS=(
     "-name \"${VALHEIM_SERVER_NAME}\""
     "-port 2456"
     "-world \"${VALHEIM_SERVER_WORLD}\""
+    "-password \"${VALHEIM_SERVER_PASSWORD}\""
+    "-public \"${VALHEIM_SERVER_PUBLIC}\""
 )
 
-if [ ! -z "${VALHEIM_SERVER_PASSWORD}" ]; then
-    echo "Password is set!"
-fi
+set -x
 
-./valheim_server.x86_64 \
-    -name "${VALHEIM_SERVER_NAME}" \
-    -port 2456 \
-    -world "${VALHEIM_SERVER_WORLD}" \
-    -password "${VALHEIM_SERVER_PASSWORD}"
+./valheim_server.x86_64 ${SERVER_ARGS[@]}
+
+set +x
 
 export LD_LIBRARY_PATH=$templdpath
