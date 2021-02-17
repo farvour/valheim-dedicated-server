@@ -1,0 +1,20 @@
+---
+version: "3.8"
+
+services:
+  valheim-server:
+    build: .
+    volumes:
+      - type: volume # You could also bind-mount this to your local FS (see below)
+        source: valheim-data
+        target: /app/valheim/data
+    ports:
+      - 2456:2456/tcp
+      - 2456:2456/udp
+      - 2457:2457/tcp
+      - 2457:2457/udp
+      - 2458:2458/tcp
+      - 2458:2458/udp
+
+volumes:
+  valheim-data:
