@@ -1,0 +1,4 @@
+login anonymous
+force_install_dir /app/valheim/dedicated-server
+app_update 896660
+quit
