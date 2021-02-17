@@ -11,4 +11,4 @@ echo "Starting server..."
 # This comes from the Dockerfile/docker ENV.
 cd ${SERVER_INSTALL_DIR}
 
-./startserver-1.sh -configfile=serverconfig.xml
+./startserver-1.sh

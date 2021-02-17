@@ -19,6 +19,7 @@ RUN echo "Installing necessary system packages to support steam CLI installation
     bash expect htop tmux lib32gcc1 pigz netcat telnet wget git vim && \
     rm -rf /var/lib/apt/lists/*
 
+# Non-privileged user ID.
 ENV PROC_UID 7997
 
 RUN echo "Create a non-privileged user to run with." && \
@@ -47,13 +48,14 @@ RUN echo "Downloading and installing steamcmd..." && \
 RUN echo "Downloading and installing valheim server with steamcmd..." && \
     ${SERVER_HOME}/steamcmd.sh +runscript steamcmd-valheim.script
 
-# Default game ports.
+# Install custom startserver script.
+COPY --chown=valheim:nogroup scripts/startserver-1.sh ${SERVER_INSTALL_DIR}/
 
+# Default game ports.
 EXPOSE 2456/tcp 2456/udp
 EXPOSE 2457/tcp 2457/udp
 EXPOSE 2458/tcp 2458/udp
 
 # Install custom entrypoint script.
-
 COPY scripts/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
