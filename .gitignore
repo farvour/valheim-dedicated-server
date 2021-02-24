@@ -1,2 +1,5 @@
 # Do not commit editor meta files to VCS.
 .vscode/
+
+# Do not commit direnv files to VCS.
+.envrc

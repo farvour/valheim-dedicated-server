@@ -9,7 +9,7 @@ services:
     volumes:
       - type: volume # You could also bind-mount this to your local FS (see below)
         source: valheim-data
-        target: /app/valheim/data
+        target: /var/opt/valheim/data
     ports:
       - 2456:2456/tcp
       - 2456:2456/udp
