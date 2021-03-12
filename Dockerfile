@@ -49,8 +49,6 @@ COPY --chown=valheim:nogroup scripts/steamcmd-valheim.script ${SERVER_HOME}/
 # files for the dedicated server. NOTE: It is a good idea to do as much as
 # possible _beyond_ this point to avoid Docker having to re-create it.
 RUN echo "Downloading and installing valheim server with steamcmd..." && \
-    cd ${SERVER_HOME} && \
-    ls -laR . && \
     ${SERVER_HOME}/Steam/steamcmd.sh +runscript ${SERVER_HOME}/steamcmd-valheim.script
 
 # Install custom startserver script.
