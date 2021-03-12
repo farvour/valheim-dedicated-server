@@ -29,6 +29,8 @@ echo "Name: ${VALHEIM_SERVER_NAME}"
 echo "World: ${VALHEIM_SERVER_WORLD}"
 
 SERVER_ARGS=(
+    "-nographics"
+    "-batchmode"
     "-name ${VALHEIM_SERVER_NAME}"
     "-port 2456"
     "-world ${VALHEIM_SERVER_WORLD}"
