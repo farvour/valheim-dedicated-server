@@ -61,6 +61,24 @@ RUN echo "Downloading and installing the BepInExPack for Valheim mod..." \
 # Install custom startserver script.
 COPY --chown=valheim:nogroup scripts/startserver-1.sh ${SERVER_INSTALL_DIR}/
 
+# Install and then configure custom BepInEx mods.
+ENV BEPINEX_PLUGINS_SRC_DIR "${SERVER_HOME}/BepInExPluginsSrc"
+ENV BEPINEX_PLUGINS_DIR "${SERVER_INSTALL_DIR}/BepInEx/plugins"
+ENV BEPINEX_CONFIG_DIR "${SERVER_INSTALL_DIR}/BepInEx/config"
+
+RUN echo "Create BepInEx plugin mods source directory..." \
+    && mkdir -p ${BEPINEX_PLUGINS_SRC_DIR}
+
+COPY --chown=valheim:nogroup plugins/*.zip ${BEPINEX_PLUGINS_SRC_DIR}/
+
+RUN echo "Install and configure BepInEx mods..." \
+    && cd ${BEPINEX_PLUGINS_SRC_DIR} \
+    && unzip "AutoSave Timer-1098-0-0-4-1620823251.zip" Server_save.dll -d ${BEPINEX_PLUGINS_DIR} \
+    && unzip "SpawnThat-453-0-11-3-1631828058.zip" Valheim.SpawnThat.dll -d ${BEPINEX_PLUGINS_DIR} \
+    && cd -
+
+COPY --chown=valheim:nogroup plugins/config/*.cfg ${BEPINEX_CONFIG_DIR}/
+
 # Default game ports.
 EXPOSE 2456/tcp 2456/udp
 EXPOSE 2457/tcp 2457/udp

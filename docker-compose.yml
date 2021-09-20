@@ -26,6 +26,9 @@ services:
       - type: volume # You could also bind-mount this to your local FS (see below)
         source: valheim-test-data
         target: /var/opt/valheim/data
+      # - type: volume # You could also bind-mount this to your local FS (see below)
+        # source: valheim-test-bepinex-config
+        # target: /opt/valheim/valheim-dedicated-server/BepInEx/config
     ports:
       - 12456:2456/tcp
       - 12456:2456/udp
@@ -36,4 +39,5 @@ services:
 
 volumes:
   valheim-data:
+  # valheim-test-bepinex-config:
   valheim-test-data:
