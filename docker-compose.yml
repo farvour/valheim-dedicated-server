@@ -18,5 +18,22 @@ services:
       - 2458:2458/tcp
       - 2458:2458/udp
 
+  valheim-test-server:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - type: volume # You could also bind-mount this to your local FS (see below)
+        source: valheim-test-data
+        target: /var/opt/valheim/data
+    ports:
+      - 12456:2456/tcp
+      - 12456:2456/udp
+      - 12457:2457/tcp
+      - 12457:2457/udp
+      - 12458:2458/tcp
+      - 12458:2458/udp
+
 volumes:
   valheim-data:
+  valheim-test-data:
