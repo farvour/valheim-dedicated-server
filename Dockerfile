@@ -13,46 +13,71 @@ ENV SERVER_INSTALL_DIR=/opt/valheim/valheim-dedicated-server
 ENV SERVER_DATA_DIR=/var/opt/valheim/data
 
 # Steam still requires 32-bit cross compilation libraries.
-RUN echo "Installing necessary system packages to support steam CLI installation..." && \
-    apt-get update && \
-    apt-get install -y \
-    bash expect htop tmux lib32gcc1 pigz netcat net-tools telnet wget git vim && \
-    rm -rf /var/lib/apt/lists/*
+RUN echo "Installing necessary system packages to support steam CLI installation..." \
+    && apt-get update \
+    && apt-get install -y bash expect htop tmux lib32gcc1 pigz netcat net-tools \
+    rsync telnet wget git unzip vim
 
 # Non-privileged user ID.
 ENV PROC_UID 7997
 
-RUN echo "Create a non-privileged user to run with." && \
-    useradd -u ${PROC_UID} -d ${SERVER_HOME} -g nogroup valheim
+RUN echo "Create a non-privileged user to run with..." \
+    && useradd -u ${PROC_UID} -d ${SERVER_HOME} -g nogroup valheim
 
-RUN echo "Create server directories..." && \
-    mkdir -p ${SERVER_HOME} && \
-    mkdir -p ${SERVER_INSTALL_DIR} && \
-    mkdir -p ${SERVER_DATA_DIR} && \
-    mkdir -p ${SERVER_HOME}/Steam && \
-    chown -R valheim:nogroup ${SERVER_HOME}
+RUN echo "Create server directories..." \
+    && mkdir -p ${SERVER_HOME} \
+    && mkdir -p ${SERVER_INSTALL_DIR} \
+    && mkdir -p ${SERVER_DATA_DIR} \
+    && mkdir -p ${SERVER_HOME}/Steam \
+    && chown -R valheim:nogroup ${SERVER_HOME}
 
 USER valheim
 
 WORKDIR ${SERVER_HOME}
 
-RUN echo "Downloading and installing steamcmd..." && \
-    cd Steam && \
-    wget https://media.steampowered.com/installer/steamcmd_linux.tar.gz && \
-    tar -zxvf steamcmd_linux.tar.gz && \
-    chown -R valheim:nogroup . && \
-    cd -
+RUN echo "Downloading and installing steamcmd..." \
+    && cd Steam \
+    && wget https://media.steampowered.com/installer/steamcmd_linux.tar.gz \
+    && tar -zxvf steamcmd_linux.tar.gz \
+    && chown -R valheim:nogroup . \
+    && cd -
 
 COPY --chown=valheim:nogroup scripts/steamcmd-valheim.script ${SERVER_HOME}/
 
 # This is most likely going to be the largest layer created; all the game
 # files for the dedicated server. NOTE: It is a good idea to do as much as
 # possible _beyond_ this point to avoid Docker having to re-create it.
-RUN echo "Downloading and installing valheim server with steamcmd..." && \
-    ${SERVER_HOME}/Steam/steamcmd.sh +runscript ${SERVER_HOME}/steamcmd-valheim.script
+RUN echo "Downloading and installing valheim server with steamcmd..." \
+    && ${SERVER_HOME}/Steam/steamcmd.sh +runscript ${SERVER_HOME}/steamcmd-valheim.script
+
+ARG BEPINEXPACK_VERSION="5.4.1502"
+
+RUN echo "Downloading and installing the BepInExPack for Valheim mod..." \
+    && wget -O denikson-BepInExPack_Valheim-${BEPINEXPACK_VERSION}.zip https://valheim.thunderstore.io/package/download/denikson/BepInExPack_Valheim/${BEPINEXPACK_VERSION}/ \
+    && unzip denikson-BepInExPack_Valheim-${BEPINEXPACK_VERSION}.zip \
+    && ls -la . \
+    && cp -rv BepInExPack_Valheim/* ${SERVER_INSTALL_DIR}/
 
 # Install custom startserver script.
 COPY --chown=valheim:nogroup scripts/startserver-1.sh ${SERVER_INSTALL_DIR}/
+
+# Install and then configure custom BepInEx mods.
+ENV BEPINEX_PLUGINS_SRC_DIR "${SERVER_HOME}/BepInExPluginsSrc"
+ENV BEPINEX_PLUGINS_DIR "${SERVER_INSTALL_DIR}/BepInEx/plugins"
+ENV BEPINEX_CONFIG_DIR "${SERVER_INSTALL_DIR}/BepInEx/config"
+
+RUN echo "Create BepInEx plugin mods source directory..." \
+    && mkdir -p ${BEPINEX_PLUGINS_SRC_DIR}
+
+COPY --chown=valheim:nogroup plugins/*.zip ${BEPINEX_PLUGINS_SRC_DIR}/
+
+RUN echo "Install and configure BepInEx mods..." \
+    && cd ${BEPINEX_PLUGINS_SRC_DIR} \
+    && unzip "AutoSave Timer-1098-0-0-4-1620823251.zip" Server_save.dll -d ${BEPINEX_PLUGINS_DIR} \
+    && unzip "SpawnThat-453-0-11-3-1631828058.zip" Valheim.SpawnThat.dll -d ${BEPINEX_PLUGINS_DIR} \
+    && cd -
+
+COPY --chown=valheim:nogroup plugins/config/*.cfg ${BEPINEX_CONFIG_DIR}/
 
 # Default game ports.
 EXPOSE 2456/tcp 2456/udp
