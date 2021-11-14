@@ -50,7 +50,7 @@ COPY --chown=valheim:nogroup scripts/steamcmd-valheim.script ${SERVER_HOME}/
 RUN echo "Downloading and installing valheim server with steamcmd..." \
     && ${SERVER_HOME}/Steam/steamcmd.sh +runscript ${SERVER_HOME}/steamcmd-valheim.script
 
-ARG BEPINEXPACK_VERSION="5.4.1502"
+ARG BEPINEXPACK_VERSION="5.4.1601"
 
 RUN echo "Downloading and installing the BepInExPack for Valheim mod..." \
     && wget -O denikson-BepInExPack_Valheim-${BEPINEXPACK_VERSION}.zip https://valheim.thunderstore.io/package/download/denikson/BepInExPack_Valheim/${BEPINEXPACK_VERSION}/ \
