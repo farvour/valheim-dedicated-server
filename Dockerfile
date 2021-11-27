@@ -78,8 +78,8 @@ COPY --chown=${PROC_USER}:${PROC_GROUP} plugins/*.zip ${BEPINEX_PLUGINS_SRC_DIR}
 RUN echo "=== install and configure BepInEx mods..." \
     && cd ${BEPINEX_PLUGINS_SRC_DIR} \
     && unzip "AutoSave Timer-1098-0-0-4-1620823251.zip" Server_save.dll -d ${BEPINEX_PLUGINS_DIR} \
-    && unzip "SpawnThat-453-0-11-3-1631828058.zip" Valheim.SpawnThat.dll -d ${BEPINEX_PLUGINS_DIR} \
-    && cd -
+    #&& unzip "SpawnThat-453-0-11-3-1631828058.zip" Valheim.SpawnThat.dll -d ${BEPINEX_PLUGINS_DIR} \
+    && echo "=== done installing mods..."
 
 COPY --chown=${PROC_USER}:${PROC_GROUP} plugins/config/*.cfg ${BEPINEX_CONFIG_DIR}/
 
