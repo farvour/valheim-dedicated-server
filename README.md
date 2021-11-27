@@ -21,14 +21,14 @@ changed. This can be accomplished by adding the `--no-cache` flag.
 
 # Create initial container but don't start it.
 > docker-compose up --no-start
-Creating valheim-dedicated-server_server_1 ... done
+Creating valheim_server_1 ... done
 
 # Check that the image exists.
 > docker-compose images
 
-            Container                         Repository               Tag       Image Id      Size
-----------------------------------------------------------------------------------------------------
-valheim-dedicated-server_server_1   valheim-dedicated-server_server   latest   614734962482   1.7 GB
+   Container         Repository      Tag       Image Id      Size
+------------------------------------------------------------------
+valheim_server_1   valheim_server   latest   00164016873a   1.7 GB
 ```
 
 # Creating and Configuring the Data Volume(s)
