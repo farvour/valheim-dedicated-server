@@ -49,12 +49,12 @@ RUN echo "=== downloading and installing steamcmd..." \
 # possible _beyond_ this point to avoid Docker having to re-create it.
 RUN echo "=== downloading and installing valheim server with steamcmd..." \
     && ${SERVER_HOME}/Steam/steamcmd.sh \
-    +login anonymous \
     +force_install_dir ${SERVER_INSTALL_DIR} \
-    +app_update 896660 \
+    +login anonymous \
+    +app_update 896660 -beta public-test -betapassword yesimadebackups validate \
     +quit
 
-ARG BEPINEXPACK_VERSION="5.4.1601"
+ARG BEPINEXPACK_VERSION="5.4.1900"
 
 RUN echo "=== downloading and installing the BepInExPack for Valheim mod..." \
     && wget -O denikson-BepInExPack_Valheim-${BEPINEXPACK_VERSION}.zip https://valheim.thunderstore.io/package/download/denikson/BepInExPack_Valheim/${BEPINEXPACK_VERSION}/ \
