@@ -13,11 +13,17 @@ ENV SERVER_HOME=/opt/${SERVER_COMPONENT_NAME}
 ENV SERVER_INSTALL_DIR=/opt/${SERVER_COMPONENT_NAME}/${SERVER_COMPONENT_NAME}-dedicated-server
 ENV SERVER_DATA_DIR=/var/opt/${SERVER_COMPONENT_NAME}/data
 
+# Use root user to install system packages and setup users.
+USER root
+
 # Steam still requires 32-bit cross compilation libraries.
 RUN echo "=== installing necessary system packages to support steam CLI installation..." \
     && apt-get update \
-    && apt-get install -y bash expect htop tmux lib32gcc1 pigz netcat net-tools \
-    rsync telnet wget git unzip vim
+    && apt-get -yy --no-install-recommends install \
+    bash ca-certificates curl expect git gosu \
+    lib32gcc1 net-tools netcat \
+    pigz rsync telnet tmux htop unzip vim wget \
+    && apt clean -y && rm -rf /var/lib/apt/lists/*
 
 # Non-privileged user ID.
 ENV PROC_UID 7997
@@ -25,7 +31,7 @@ ENV PROC_USER valheim
 ENV PROC_GROUP nogroup
 
 RUN echo "=== create a non-privileged user to run with..." \
-    && useradd -u ${PROC_UID} -d ${SERVER_HOME} -g -g ${PROC_GROUP} ${PROC_USER}
+    && useradd -u ${PROC_UID} -d ${SERVER_HOME} -g ${PROC_GROUP} ${PROC_USER}
 
 RUN echo "=== create server directories..." \
     && mkdir -p ${SERVER_HOME} \
@@ -84,6 +90,12 @@ RUN echo "=== install and configure BepInEx mods..." \
 
 COPY --chown=${PROC_USER}:${PROC_GROUP} plugins/config/*.cfg ${BEPINEX_CONFIG_DIR}/
 
+# Set working directory to installation directory.
+WORKDIR ${SERVER_INSTALL_DIR}
+
+# Switch back to root user to allow entrypoint to drop privileges.
+USER root
+
 # Default game ports.
 EXPOSE 2456/tcp 2456/udp
 EXPOSE 2457/tcp 2457/udp
@@ -92,3 +104,4 @@ EXPOSE 2458/tcp 2458/udp
 # Install custom entrypoint script.
 COPY scripts/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
+CMD ["./startserver-1.sh"]
