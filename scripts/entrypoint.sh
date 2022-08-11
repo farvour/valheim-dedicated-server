@@ -6,9 +6,19 @@
 
 set -xe
 
+echo
 echo "Starting server..."
+echo
 
 # This comes from the Dockerfile/docker ENV.
 cd ${SERVER_INSTALL_DIR}
 
-./startserver-1.sh
+if [ "$(id -u)" = "0" ]; then
+	# Ensure ownership of data files.
+	chown -R ${PROC_USER}:${PROC_GROUP} ${SERVER_DATA_DIR}
+
+	echo "Dropping root privileges before invoking server..."
+	exec gosu ${PROC_USER} "$@"
+fi
+
+exec "$@"
