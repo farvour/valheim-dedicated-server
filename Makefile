@@ -27,7 +27,7 @@ FAILED = echo ✘ $@ failed
 
 # Materialized executables.
 DOCKER_CMD ?= docker
-DOCKER_COMPOSE_CMD ?= docker-compose
+DOCKER_COMPOSE_CMD ?= docker compose
 
 # HELP
 # This will output the help for each task

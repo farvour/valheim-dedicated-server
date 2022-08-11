@@ -20,7 +20,7 @@ USER root
 RUN echo "=== installing necessary system packages to support steam CLI installation..." \
     && apt-get update \
     && apt-get -yy --no-install-recommends install \
-    bash ca-certificates curl expect git gosu \
+    bash ca-certificates curl dumb-init expect git gosu \
     lib32gcc1 net-tools netcat \
     pigz rsync telnet tmux htop unzip vim wget \
     && apt clean -y && rm -rf /var/lib/apt/lists/*
@@ -103,5 +103,5 @@ EXPOSE 2458/tcp 2458/udp
 
 # Install custom entrypoint script.
 COPY scripts/entrypoint.sh /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--rewrite", "15:2", "--", "/entrypoint.sh"]
 CMD ["./startserver-1.sh"]
