@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ubuntu:focal
 LABEL maintainer="Thomas Farvour <tom@farvour.com>"
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -8,9 +8,10 @@ ARG DEBIAN_FRONTEND=noninteractive
 # saves or other things, this doesn't really have to change, but is
 # here for clarity and customization in case.
 
-ENV SERVER_HOME=/opt/valheim
-ENV SERVER_INSTALL_DIR=/opt/valheim/valheim-dedicated-server
-ENV SERVER_DATA_DIR=/var/opt/valheim/data
+ENV SERVER_COMPONENT_NAME=valheim
+ENV SERVER_HOME=/opt/${SERVER_COMPONENT_NAME}
+ENV SERVER_INSTALL_DIR=/opt/${SERVER_COMPONENT_NAME}/${SERVER_COMPONENT_NAME}-dedicated-server
+ENV SERVER_DATA_DIR=/var/opt/${SERVER_COMPONENT_NAME}/data
 
 # Steam still requires 32-bit cross compilation libraries.
 RUN echo "=== installing necessary system packages to support steam CLI installation..." \
@@ -24,14 +25,14 @@ ENV PROC_USER valheim
 ENV PROC_GROUP nogroup
 
 RUN echo "=== create a non-privileged user to run with..." \
-    && useradd -u ${PROC_UID} -d ${SERVER_HOME} -g nogroup valheim
+    && useradd -u ${PROC_UID} -d ${SERVER_HOME} -g -g ${PROC_GROUP} ${PROC_USER}
 
 RUN echo "=== create server directories..." \
     && mkdir -p ${SERVER_HOME} \
     && mkdir -p ${SERVER_INSTALL_DIR} \
     && mkdir -p ${SERVER_DATA_DIR} \
     && mkdir -p ${SERVER_HOME}/Steam \
-    && chown -R valheim:nogroup ${SERVER_HOME}
+    && chown -R ${PROC_USER}:${PROC_GROUP} ${SERVER_HOME}
 
 USER ${PROC_USER}
 
@@ -41,7 +42,7 @@ RUN echo "=== downloading and installing steamcmd..." \
     && cd Steam \
     && wget https://media.steampowered.com/installer/steamcmd_linux.tar.gz \
     && tar -zxvf steamcmd_linux.tar.gz \
-    && chown -R valheim:nogroup . \
+    && chown -R ${PROC_USER}:${PROC_GROUP} . \
     && cd -
 
 # This is most likely going to be the largest layer created; all the game
@@ -51,10 +52,10 @@ RUN echo "=== downloading and installing valheim server with steamcmd..." \
     && ${SERVER_HOME}/Steam/steamcmd.sh \
     +force_install_dir ${SERVER_INSTALL_DIR} \
     +login anonymous \
-    +app_update 896660 -beta public-test -betapassword yesimadebackups validate \
+    +app_update 896660 validate \
     +quit
 
-ARG BEPINEXPACK_VERSION="5.4.1900"
+ARG BEPINEXPACK_VERSION="5.4.1901"
 
 RUN echo "=== downloading and installing the BepInExPack for Valheim mod..." \
     && wget -O denikson-BepInExPack_Valheim-${BEPINEXPACK_VERSION}.zip https://valheim.thunderstore.io/package/download/denikson/BepInExPack_Valheim/${BEPINEXPACK_VERSION}/ \
