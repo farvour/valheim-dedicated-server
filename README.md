@@ -8,7 +8,7 @@ portable deployment.
 The purpose of this repository is to build and run a container for a
 Valheim dedicated server.
 
-# Building the Container
+# Building the container
 In order to build the container, the easiest way to get started is to use the
 docker compose tool. Lever the docker compose command to build the dedicated
 server container so it is ready to be used. Sometimes you may have to bust the
@@ -31,7 +31,7 @@ Creating valheim_server_1 ... done
 valheim_server_1   valheim_server   latest   00164016873a   1.7 GB
 ```
 
-# Creating and Configuring the Data Volume(s)
+# Creating and configuring the data volume(s)
 In order for any worlds or save game data to persist, we need a volume. There
 are many ways to go about adding a persistent volume to your server but this
 document will only go over the docker volume method.
@@ -42,12 +42,12 @@ doesn't already exist) is to bring up a container with a simple run. The
 [entrypoint.sh](./scripts/entrypoint.sh) script will take care of ensuring
 proper ownership of the data files.
 
-# Running the Dedicated Server
+# Running the dedicated server
 The first thing you should do is ensure the environment is customized to your
 needs to do things like set the world name, world seed, password and other
 options.
 
-## Configuring Environment and Settings
+## Configuring environment and settings
 
 ```bash
 export VALHEIM_SERVER_NAME="Valheim"
@@ -78,7 +78,7 @@ You can then shut down the server gracefully by sending a SIGINT/SIGTERM. If
 running in foreground or console mode a *Ctrl+C* should invoke this. If you
 run `docker compose stop server`, then that will stop it gracefully for you.
 
-## Test Server
+## Test server
 The compose file also contains a server definition for a test instance of
 Valheim dedicated server. This is useful for testing or canary changes to the
 game server, configuration, mods, etc. By default it is commented out in the
