@@ -100,8 +100,8 @@ COPY --chown=${PROC_USER}:${PROC_GROUP} plugins/*.zip ${BEPINEX_PLUGINS_SRC_DIR}
 RUN echo "=== Install and configure BepInEx mods..." \
     && cd ${BEPINEX_PLUGINS_SRC_DIR} \
     && unzip -j "Smoothbrain-ComfortTweaks-3.0.0.zip" plugins/ComfortTweaks.dll -d ${BEPINEX_PLUGINS_DIR} \
-    # && unzip "AutoSave Timer-1098-0-0-4-1620823251.zip" Server_save.dll -d ${BEPINEX_PLUGINS_DIR} \
-    # && unzip "SpawnThat-453-1-2-1-1671703481.zip" Valheim.SpawnThat.dll -d ${BEPINEX_PLUGINS_DIR} \
+    && unzip "Smoothbrain-SailingSpeed-1.0.2.zip" SailingSpeed.dll -d ${BEPINEX_PLUGINS_DIR} \
+    && unzip "SpawnThat-453-1-2-1-1671703481.zip" Valheim.SpawnThat.dll YamlDotNet.dll -d ${BEPINEX_PLUGINS_DIR} \
     && echo "=== Done installing mods..."
 
 COPY --chown=${PROC_USER}:${PROC_GROUP} plugins/config/*.cfg ${BEPINEX_CONFIG_DIR}/
