@@ -103,6 +103,7 @@ RUN echo "=== Install and configure BepInEx mods..." \
     && unzip "Smoothbrain-SailingSpeed-1.0.2.zip" SailingSpeed.dll -d ${BEPINEX_PLUGINS_DIR} \
     && unzip "SpawnThat-453-1-2-1-1671703481.zip" Valheim.SpawnThat.dll YamlDotNet.dll -d ${BEPINEX_PLUGINS_DIR} \
     && unzip "drop-that-221-2-3-4-1672432161.zip" Valheim.DropThat.dll -d ${BEPINEX_PLUGINS_DIR} \
+    && unzip "Plant Everything-1042-1-13-0-1673093801.zip" Advize_PlantEverything.dll -d ${BEPINEX_PLUGINS_DIR} \
     && echo "=== Done installing mods..."
 
 COPY --chown=${PROC_USER}:${PROC_GROUP} plugins/config/*.cfg ${BEPINEX_CONFIG_DIR}/
