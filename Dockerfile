@@ -89,6 +89,7 @@ RUN echo "=== Install and configure BepInEx mods" \
     && unzip "ASharpPen-Spawn_That-1.2.9.zip" Valheim.SpawnThat.dll YamlDotNet.dll -d ${BEPINEX_PLUGINS_DIR} \
     && unzip "ASharpPen-Drop_That-2.3.11.zip" Valheim.DropThat.dll -d ${BEPINEX_PLUGINS_DIR} \
     && unzip "Advize-PlantEverything-1.16.2.zip" Advize_PlantEverything.dll -d ${BEPINEX_PLUGINS_DIR} \
+    && unzip "OdinPlus-TeleportEverything-2.6.1.zip" TeleportEverything.dll -d ${BEPINEX_PLUGINS_DIR} \
     && echo "=== Done installing mods!"
 
 COPY --chown=${PROC_USER}:${PROC_GROUP} plugins/config/*.cfg ${BEPINEX_CONFIG_DIR}/
