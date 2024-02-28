@@ -12,6 +12,8 @@ set -e
 : ${VALHEIM_SERVER_WORLD:="dedicated_world"}
 : ${VALHEIM_SERVER_PASSWORD:=""}
 : ${VALHEIM_SERVER_PUBLIC:="0"} # Private, unlisted by default.
+: ${VALHEIM_SERVER_PRESET:=""}
+: ${VALHEIM_SERVER_MODIFIERS:=""}
 
 # Dedicated server requires a password.
 if [ -z "${VALHEIM_SERVER_PASSWORD}" ]; then
@@ -49,6 +51,10 @@ SERVER_ARGS=(
     "-password ${VALHEIM_SERVER_PASSWORD}"
     "-public ${VALHEIM_SERVER_PUBLIC}"
     "-savedir ${SERVER_DATA_DIR}" # This comes from Dockerfile/ENV.
+    "-saveinterval 600"
+    "-backups 10"
+    "${VALHEIM_SERVER_PRESET}"
+    "${VALHEIM_SERVER_MODIFIERS}"
 )
 
 set -x
