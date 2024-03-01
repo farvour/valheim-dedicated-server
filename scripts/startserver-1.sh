@@ -14,6 +14,7 @@ set -e
 : ${VALHEIM_SERVER_PUBLIC:="0"} # Private, unlisted by default.
 : ${VALHEIM_SERVER_PRESET:=""}
 : ${VALHEIM_SERVER_MODIFIERS:=""}
+: ${VALHEIM_SERVER_SETKEYS:=""}
 
 # Dedicated server requires a password.
 if [ -z "${VALHEIM_SERVER_PASSWORD}" ]; then
@@ -55,6 +56,7 @@ SERVER_ARGS=(
     "-backups 10"
     "${VALHEIM_SERVER_PRESET}"
     "${VALHEIM_SERVER_MODIFIERS}"
+    "${VALHEIM_SERVER_SETKEYS}"
 )
 
 set -x
