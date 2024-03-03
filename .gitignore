@@ -3,3 +3,6 @@
 
 # Do not commit direnv files to VCS.
 .envrc
+
+# Do not commit the BepInEx mod plugin Debug files.
+plugins/config/Debug/
