@@ -1,4 +1,4 @@
-FROM ubuntu:jammy
+FROM debian:bullseye
 LABEL maintainer="Thomas Farvour <tom@farvour.com>"
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -17,27 +17,12 @@ ENV SERVER_DATA_DIR=/var/opt/${SERVER_COMPONENT_NAME}/data
 USER root
 
 # Steam still requires 32-bit cross compilation libraries.
-RUN echo "=== Installing necessary system packages to support steam CLI installation..." \
+RUN echo "=== Installing necessary system packages to support steam CLI installation" \
     && apt-get update \
     && apt-get -yy --no-install-recommends install \
-    bash \
-    ca-certificates \
-    curl \
-    dumb-init \
-    expect \
-    git \
-    gosu \
-    htop \
-    lib32gcc-s1 \
-    net-tools \
-    netcat \
-    pigz \
-    rsync \
-    telnet \
-    tmux \
-    unzip \
-    vim \
-    wget \
+    bash ca-certificates curl dumb-init expect git gosu htop \
+    lib32gcc-s1 net-tools netcat pigz rsync telnet tmux unzip \
+    vim wget \
     && apt clean -y && rm -rf /var/lib/apt/lists/*
 
 # Non-privileged user ID.
@@ -45,10 +30,10 @@ ENV PROC_UID 7997
 ENV PROC_USER valheim
 ENV PROC_GROUP nogroup
 
-RUN echo "=== Create a non-privileged user to run with..." \
+RUN echo "=== Create a non-privileged user to run with" \
     && useradd -u ${PROC_UID} -d ${SERVER_HOME} -g ${PROC_GROUP} ${PROC_USER}
 
-RUN echo "=== Create server directories..." \
+RUN echo "=== Create server directories" \
     && mkdir -p ${SERVER_HOME} \
     && mkdir -p ${SERVER_INSTALL_DIR} \
     && mkdir -p ${SERVER_DATA_DIR} \
@@ -59,7 +44,7 @@ USER ${PROC_USER}
 
 WORKDIR ${SERVER_HOME}
 
-RUN echo "=== Downloading and installing steamcmd..." \
+RUN echo "=== Downloading and installing steamcmd" \
     && cd Steam \
     && wget https://media.steampowered.com/installer/steamcmd_linux.tar.gz \
     && tar -zxvf steamcmd_linux.tar.gz \
@@ -69,16 +54,16 @@ RUN echo "=== Downloading and installing steamcmd..." \
 # This is most likely going to be the largest layer created; all the game
 # files for the dedicated server. NOTE: It is a good idea to do as much as
 # possible _beyond_ this point to avoid Docker having to re-create it.
-RUN echo "=== Downloading and installing valheim server with steamcmd..." \
+RUN echo "=== Downloading and installing valheim server with steamcmd" \
     && ${SERVER_HOME}/Steam/steamcmd.sh \
     +force_install_dir ${SERVER_INSTALL_DIR} \
     +login anonymous \
     +app_update 896660 validate \
     +quit
 
-ARG BEPINEXPACK_VERSION="5.4.1901"
+ARG BEPINEXPACK_VERSION="5.4.2202"
 
-RUN echo "=== Downloading and installing the BepInExPack for Valheim mod..." \
+RUN echo "=== Downloading and installing the BepInExPack for Valheim mod" \
     && wget -O denikson-BepInExPack_Valheim-${BEPINEXPACK_VERSION}.zip https://valheim.thunderstore.io/package/download/denikson/BepInExPack_Valheim/${BEPINEXPACK_VERSION}/ \
     && unzip denikson-BepInExPack_Valheim-${BEPINEXPACK_VERSION}.zip \
     && ls -la . \
@@ -92,19 +77,21 @@ ENV BEPINEX_PLUGINS_SRC_DIR "${SERVER_HOME}/BepInExPluginsSrc"
 ENV BEPINEX_PLUGINS_DIR "${SERVER_INSTALL_DIR}/BepInEx/plugins"
 ENV BEPINEX_CONFIG_DIR "${SERVER_INSTALL_DIR}/BepInEx/config"
 
-RUN echo "=== Create BepInEx plugin mods source directory..." \
+RUN echo "=== Create BepInEx plugin mods source directory" \
     && mkdir -p ${BEPINEX_PLUGINS_SRC_DIR}
 
 COPY --chown=${PROC_USER}:${PROC_GROUP} plugins/*.zip ${BEPINEX_PLUGINS_SRC_DIR}/
 
-RUN echo "=== Install and configure BepInEx mods..." \
+RUN echo "=== Install and configure BepInEx mods" \
     && cd ${BEPINEX_PLUGINS_SRC_DIR} \
-    && unzip -j "Smoothbrain-ComfortTweaks-3.1.9.zip" plugins/ComfortTweaks.dll -d ${BEPINEX_PLUGINS_DIR} \
-    && unzip "Smoothbrain-SailingSpeed-1.0.2.zip" SailingSpeed.dll -d ${BEPINEX_PLUGINS_DIR} \
-    && unzip "SpawnThat-453-1-2-1-1671703481.zip" Valheim.SpawnThat.dll YamlDotNet.dll -d ${BEPINEX_PLUGINS_DIR} \
-    && unzip "drop-that-221-2-3-4-1672432161.zip" Valheim.DropThat.dll -d ${BEPINEX_PLUGINS_DIR} \
-    && unzip "Plant Everything-1042-1-13-0-1673093801.zip" Advize_PlantEverything.dll -d ${BEPINEX_PLUGINS_DIR} \
-    && echo "=== Done installing mods..."
+    && unzip -j "Smoothbrain-ComfortTweaks-3.2.10.zip" plugins/ComfortTweaks.dll -d ${BEPINEX_PLUGINS_DIR} \
+    && unzip "Smoothbrain-SailingSpeed-1.0.3.zip" SailingSpeed.dll -d ${BEPINEX_PLUGINS_DIR} \
+    # && unzip "Smoothbrain-Mining-1.1.5.zip" Mining.dll -d ${BEPINEX_PLUGINS_DIR} \
+    && unzip "ASharpPen-Spawn_That-1.2.9.zip" Valheim.SpawnThat.dll YamlDotNet.dll -d ${BEPINEX_PLUGINS_DIR} \
+    && unzip "ASharpPen-Drop_That-2.3.11.zip" Valheim.DropThat.dll -d ${BEPINEX_PLUGINS_DIR} \
+    && unzip "Advize-PlantEverything-1.16.2.zip" Advize_PlantEverything.dll -d ${BEPINEX_PLUGINS_DIR} \
+    && unzip "OdinPlus-TeleportEverything-2.6.1.zip" TeleportEverything.dll -d ${BEPINEX_PLUGINS_DIR} \
+    && echo "=== Done installing mods!"
 
 COPY --chown=${PROC_USER}:${PROC_GROUP} plugins/config/*.cfg ${BEPINEX_CONFIG_DIR}/
 
@@ -121,5 +108,7 @@ EXPOSE 2458/tcp 2458/udp
 
 # Install custom entrypoint script.
 COPY scripts/entrypoint.sh /entrypoint.sh
+
+# Set entrypoint and default command.
 ENTRYPOINT ["/usr/bin/dumb-init", "--rewrite", "15:2", "--", "/entrypoint.sh"]
 CMD ["./startserver-1.sh"]
