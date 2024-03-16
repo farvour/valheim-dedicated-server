@@ -82,11 +82,10 @@ RUN echo "=== Create BepInEx plugin mods source directory" \
 
 COPY --chown=${PROC_USER}:${PROC_GROUP} plugins/*.zip ${BEPINEX_PLUGINS_SRC_DIR}/
 
-RUN echo "=== Install and configure BepInEx mods" \
+RUN echo "=== Install and configure BepInEx server-side mods" \
     && cd ${BEPINEX_PLUGINS_SRC_DIR} \
     && unzip -j "Smoothbrain-ComfortTweaks-3.2.10.zip" plugins/ComfortTweaks.dll -d ${BEPINEX_PLUGINS_DIR} \
     && unzip "Smoothbrain-SailingSpeed-1.0.3.zip" SailingSpeed.dll -d ${BEPINEX_PLUGINS_DIR} \
-    # && unzip "Smoothbrain-Mining-1.1.5.zip" Mining.dll -d ${BEPINEX_PLUGINS_DIR} \
     && unzip "ASharpPen-Spawn_That-1.2.9.zip" Valheim.SpawnThat.dll YamlDotNet.dll -d ${BEPINEX_PLUGINS_DIR} \
     && unzip "ASharpPen-Drop_That-2.3.11.zip" Valheim.DropThat.dll -d ${BEPINEX_PLUGINS_DIR} \
     && unzip "Advize-PlantEverything-1.16.2.zip" Advize_PlantEverything.dll -d ${BEPINEX_PLUGINS_DIR} \
